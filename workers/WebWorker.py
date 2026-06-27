@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
+
+
 class WebWorker(threading.Thread):
     def __init__(self):
         super().__init__()
@@ -28,8 +30,6 @@ class WebWorker(threading.Thread):
                 l.append({"number":number,"symbol":symbol,"name":name})
 
         return l        
-        
-
     def get_sp_500_companies(self):
         headers={
             "User-Agent":"Mozilla/5.0 (compatible; SP500Scraper/1.0)"
