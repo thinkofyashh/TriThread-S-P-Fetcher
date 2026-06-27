@@ -1,38 +1,42 @@
 import threading 
 import requests 
 from bs4 import BeautifulSoup
+import json
 
 class WebWorker(threading.Thread):
     def __init__(self):
         super().__init__()
-        self.url="https://www.tickertape.in/stocks/collections/small-cap-stocks" # Hardcoded URL for Wiki website 
+        self.url="https://en.wikipedia.org/wiki/List_of_S%26P_500_companies" # Hardcoded URL for Wiki website 
         
 
     @staticmethod
     def extract_sp_500_companies(page_html):
         soup=BeautifulSoup(page_html,"lxml")
-        table_container=soup.find("div",id="screener-table")
-        table=table_container.find("table")
-        table_rows=table.find_all("tr")
+        table_container=soup.find("table",id="constituents")
+        if table_container is None:
+            return []
+       # table=table_container.find("table")
+        table_rows=table_container.find_all("tr")[1:]
 
         l=[]
-        for row in table_rows[0:]:
+        for number,row in enumerate(table_rows[0:],start=1):
+            row_elements=row.find_all("td")
 
-            name=row.select_one("td.data-col")
-            subsector=row.select_one("td.subindustry-col")
-            marketcap=row.select_one("td.mrktCapf-col")
-
-            if name and subsector and marketcap:
-                number=row.find("td").get_text(strip=True)
-                l.append({"number":number,"name":list(name.stripped_strings)[0],"subsector":list(subsector.stripped_strings)[0],"marketcap":list(marketcap.stripped_strings)[0]})
+            if len(row_elements)>=2:
+                symbol=row_elements[0].get_text(strip=True)
+                name=row_elements[1].get_text(strip=True)
+                l.append({"number":number,"symbol":symbol,"name":name})
 
         return l        
         
 
     def get_sp_500_companies(self):
-        response=requests.get(self.url)
+        headers={
+            "User-Agent":"Mozilla/5.0 (compatible; SP500Scraper/1.0)"
+        }
+        response=requests.get(self.url,headers=headers,timeout=10)
         if response.status_code!=200:
-            print("Not able to Fetch the Records .")
+            print(f"Not able to Fetch the Records. Status code: {response.status_code}")
             return []
         else :
             return self.extract_sp_500_companies(response.text)
@@ -40,8 +44,10 @@ class WebWorker(threading.Thread):
 
     def run(self):
         l=self.get_sp_500_companies()
-        for i in l:
-            print(i)
+        with open("companies.txt","w") as f:
+            json.dump(l,f,indent=2)
+            
+
 
             
 
