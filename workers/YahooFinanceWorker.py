@@ -21,14 +21,13 @@ class YahooFinanceWorkerScheduler(threading.Thread):
                 print(price)
             finally:
                 self.input_queue.task_done()
-                    
+
 
 
 
 
 class YahooFinanceWorker():
     def __init__(self,symbol):
-        super().__init__()
         self.symbol=symbol
         base_url="https://finance.yahoo.com/quote/"
         self.url=f'{base_url}{self.symbol}'
