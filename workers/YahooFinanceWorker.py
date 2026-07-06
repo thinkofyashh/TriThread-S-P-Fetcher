@@ -1,12 +1,23 @@
 import threading 
 from bs4 import BeautifulSoup
 import requests 
+import datetime
+from decimal import Decimal
+
+
+def clean_price(Price):
+    if Price=="NaN":
+        return None
+    return Decimal(Price.replace(",",""))
+    
 
 
 class YahooFinanceWorkerScheduler(threading.Thread):
-    def __init__(self,input_queue):
+    def __init__(self,input_queue,output_queue):
         super().__init__()
         self.input_queue=input_queue
+        self.output_queue=output_queue
+
 
 
     def run(self):
@@ -14,11 +25,18 @@ class YahooFinanceWorkerScheduler(threading.Thread):
             val=self.input_queue.get()
             try:
                 if val=="DONE":
+                  
                  break
 
                 yahooFinanceprice=YahooFinanceWorker(val)
                 price=yahooFinanceprice.getPrice()
-                print(price)
+                self.output_queue.put({
+                    "symbol":val,
+                    "price":clean_price(price),
+                    "extracted_time":datetime.datetime.now()
+                })
+                #self.output_queue.put(value)
+               # print(price)
             finally:
                 self.input_queue.task_done()
 
@@ -49,6 +67,7 @@ class YahooFinanceWorker():
             price=price_element.get_text(strip=True)
             return price
         return "NaN"
+    
 
     
           

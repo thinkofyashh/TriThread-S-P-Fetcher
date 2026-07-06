@@ -1,3 +1,4 @@
 ./myenv
 myenv/
 workers/__pycache__/
+.env
