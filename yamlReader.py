@@ -67,6 +67,8 @@ class YamlPipelineReader():
         return worker_class()
     
     def _load_symbols(self,step):
+
+
         data=""
         with open(step["input"],"r") as f:
             data=json.load(f)
@@ -130,7 +132,10 @@ class YamlPipelineReader():
                     self.worker[step_name].append(worker)
 
                 
+        self._start_worker("scrape_companies_data")
 
+        for worker in self.worker["scrape_companies_data"]:
+            worker.join()
 
         self._start_worker("store_price")
         self._start_worker("fetch_price")
@@ -148,9 +153,5 @@ class YamlPipelineReader():
 
 
 
-        
-
     
-t=PipelineThread("pipelines/wiki_yahoo_scraper_pipeline.yaml")     
-t.start()
 

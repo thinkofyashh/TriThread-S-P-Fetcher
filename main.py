@@ -1,13 +1,23 @@
 from workers.WebWorker import WebWorker
 from workers.YahooFinanceWorker import YahooFinanceWorkerScheduler
 from workers.postgresWorker import PostgresWorkerSchedular
+from yamlReader import PipelineThread
 import json
 from queue import Queue
 
 
 
 def main():
-    symbol_queue=Queue()
+
+    pipeline1=PipelineThread("pipelines/wiki_yahoo_scraper_pipeline.yaml")
+    pipeline1.start()
+    pipeline1.join()
+
+
+
+    '''
+    
+     symbol_queue=Queue()
     postgres_queue=Queue()
 
     thread_count=5
@@ -50,6 +60,10 @@ def main():
 
     for i in range(len(postgres_worker_thread)):
         postgres_worker_thread[i].join()
+    
+    
+    '''
+   
 
 
 
