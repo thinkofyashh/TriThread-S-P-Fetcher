@@ -33,3 +33,6 @@ shutdown:
     sent_by: main.py
     count: thread_count
     after: YahooFinanceWorkerScheduler threads finish
+
+settings:
+  thread_count: 5  

@@ -1,14 +1,10 @@
-l=[
-  {
-    "number": 1,
-    "symbol": "MMM",
-    "name": "3M"
-  },
-  {
-    "number": 2,
-    "symbol": "AOS",
-    "name": "A. O. Smith"
-  }]
+import yaml 
 
 
-print(l[0]["symbol"])
+data={}
+
+with open("pipelines/wiki_yahoo_scraper_pipeline.yaml",'r') as f:
+    data=yaml.safe_load(f)
+
+
+print(data )
