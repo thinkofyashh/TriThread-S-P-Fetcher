@@ -107,10 +107,6 @@ class YamlPipelineReader():
         for worker in self.worker['store_price']:
             worker.join()    
 
-
-
-
-
     def run(self):
         self._load_pipeline()
         self._load_threadCount()
