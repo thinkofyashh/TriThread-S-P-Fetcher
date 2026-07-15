@@ -12,6 +12,15 @@ async def task_B():
         print("Task B is still running in the BG .")
     print("Task B is Finally Done")
 
+#without task Group using gather .
+
+async def handle_something():
+    try :
+        await asyncio.gather(task_A(),task_B())
+    except ValueError as e:
+        print(e)
+
+
 # With Task Group
 
 async def handle_with_taskGroup():
